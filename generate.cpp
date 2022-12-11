@@ -1,4 +1,5 @@
 #include "generate.hpp"
+#include <cmath>
 band_matrix::band_matrix(int n,int l){
     this->n = n;
     this->l = l;
@@ -94,6 +95,17 @@ linsys gensys(int n,int l,double q,int seed){
     auto x = gen_vec(n);
     s.b = s.A.T()*(s.A * x);
     s.A = s.A.T()*s.A;
+    for(int i =0;i<n;i++){
+        double sum = 0;
+        for(int j=(i>=l?i-l:0);j<n && j<=i+l;j++){
+            if(i==j)
+                continue;
+            sum+=fabs(s.A.get(i,j));
+        }
+        if(fabs(s.A.get(i,i))< sum)
+            s.A.set(i,i,sum);
+
+    }
     return s;
 }
 
